@@ -1,0 +1,124 @@
+.services {
+  padding: var(--section-pad);
+  background: var(--bone);
+}
+
+.services__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.services__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  margin-top: 20px;
+}
+
+.service-card {
+  background: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(0,0,0,0.06);
+}
+
+.service-card:hover,
+.service-card.active {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 48px rgba(0,0,0,0.10);
+}
+
+.service-card__img {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+}
+
+.service-card__img img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.service-card:hover .service-card__img img {
+  transform: scale(1.06);
+}
+
+.service-card__num {
+  position: absolute;
+  top: 14px; right: 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.2);
+  line-height: 1;
+}
+
+.service-card__body {
+  padding: 24px;
+}
+
+.service-card__icon {
+  font-size: 1.6rem;
+  margin-bottom: 12px;
+}
+
+.service-card__body h3 {
+  font-size: 1.25rem;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.service-card__body p {
+  font-size: 0.88rem;
+  color: #666;
+  line-height: 1.75;
+  margin-bottom: 18px;
+}
+
+.service-card__features {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px 12px;
+  margin-bottom: 20px;
+}
+
+.service-card__features li {
+  font-size: 0.82rem;
+  color: var(--slate);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.feat-dot {
+  color: var(--gold);
+  font-size: 0.75rem;
+}
+
+.service-card__cta {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--gold);
+  letter-spacing: 0.04em;
+  transition: letter-spacing 0.2s;
+}
+
+.service-card:hover .service-card__cta {
+  letter-spacing: 0.08em;
+}
+
+@media (max-width: 960px) {
+  .services__grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .services__grid { grid-template-columns: 1fr; }
+  .services__header { flex-direction: column; }
+}
