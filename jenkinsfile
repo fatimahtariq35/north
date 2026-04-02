@@ -5,8 +5,8 @@ pipeline {
 
         stage('Clone') {
             steps {
-                git branch: 'main',
-  url: 'https://github.com/fatimahtariq35/north.git'            }
+                git 'https://github.com/fatimahtariq35/north.git'
+            }
         }
 
         stage('Install') {
@@ -21,15 +21,9 @@ pipeline {
             }
         }
 
-        stage('Docker Build') {
-            steps {
-                bat 'docker build -t north.'
-            }
-        }
-
         stage('Run') {
             steps {
-                bat 'docker run -d -p 3000:3000 north'
+                bat 'npm start'
             }
         }
     }
