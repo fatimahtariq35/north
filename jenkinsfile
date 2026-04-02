@@ -4,35 +4,32 @@ pipeline {
     stages {
 
         stage('Clone') {
-    steps {
-        git branch: 'main',
-        url: 'https://github.com/fatimahtariq35/north.git'
-    }
-}
+            steps {
+                git branch: 'main',
+  url: 'https://github.com/fatimahtariq35/north.git'            }
+        }
 
-
-       stage('Install') {
-    steps {
-        sh 'npm install'
-    }
-}
-
+        stage('Install') {
+            steps {
+                bat 'npm install'
+            }
+        }
 
         stage('Build') {
             steps {
-                sh 'npm run build'
+                bat 'npm run build'
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t landing-page .'
+                bat 'docker build -t landing-page .'
             }
         }
 
         stage('Run') {
             steps {
-                sh 'docker run -d -p 3000:3000 landing-page'
+                bat 'docker run -d -p 3000:3000 landing-page'
             }
         }
     }
