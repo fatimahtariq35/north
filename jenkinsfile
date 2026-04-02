@@ -3,11 +3,11 @@ pipeline {
 
     stages {
 
-         stage('Clone') {
-        steps {
-            git 'https://github.com/fatimahtariq35/north.git'
-        }
+       stage('Clone') {
+    steps {
+        git branch: 'main', url: 'https://github.com/fatimahtariq35/north.git'
     }
+}
 
 
         stage('Install') {
