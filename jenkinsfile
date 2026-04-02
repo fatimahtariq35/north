@@ -11,25 +11,25 @@ pipeline {
 
         stage('Install') {
             steps {
-                sh 'npm install'
+                bat 'npm install'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'npm run build'
+                bat 'npm run build'
             }
         }
 
         stage('Docker Build') {
             steps {
-                sh 'docker build -t north.'
+                bat 'docker build -t north.'
             }
         }
 
         stage('Run') {
             steps {
-                sh 'docker run -d -p 3000:3000 north'
+                bat 'docker run -d -p 3000:3000 north'
             }
         }
     }
