@@ -17,19 +17,19 @@ pipeline {
 
         stage('Build') {
             steps {
-                bat 'npm run build'
+                sh 'npm run build'
             }
         }
 
         stage('Docker Build') {
             steps {
-                bat 'docker build -t landing-page .'
+                sh 'docker build -t north.'
             }
         }
 
         stage('Run') {
             steps {
-                bat 'docker run -d -p 3000:3000 landing-page'
+                sh 'docker run -d -p 3000:3000 north'
             }
         }
     }
