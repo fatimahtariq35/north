@@ -4,16 +4,19 @@ pipeline {
     stages {
 
         stage('Clone') {
-            steps {
-                git 'https://github.com/your-username/landing-page.git'
-            }
-        }
+    steps {
+        git branch: 'main',
+        url: 'https://github.com/fatimahtariq35/north.git'
+    }
+}
 
-        stage('Install') {
-            steps {
-                sh 'npm install'
-            }
-        }
+
+       stage('Install') {
+    steps {
+        sh 'npm install'
+    }
+}
+
 
         stage('Build') {
             steps {
