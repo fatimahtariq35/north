@@ -1,31 +1,61 @@
 pipeline {
     agent any
-
-    stages {
-
-       stage('Clone') {
-    steps {
-        git branch: 'main', url: 'https://github.com/fatimahtariq35/north.git'
+    
+    environment {
+        DEPLOY_PATH = '/var/www/react-app'
     }
-}
-
-
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/fatimahtariq35/north.git'
+            }
+        }
+        
         stage('Install') {
             steps {
-                bat 'npm install'
+                sh 'npm install'
             }
         }
-
+        
         stage('Build') {
             steps {
-                bat 'npm run build'
+                sh 'npm run build'
             }
         }
-
-        stage('Run') {
+        
+        stage('Deploy to Nginx') {
             steps {
-                bat 'npm start'
+                sh '''
+                    # Create deployment directory if it doesn't exist
+                    sudo mkdir -p ${DEPLOY_PATH}
+                    
+                    # Remove old build files
+                    sudo rm -rf ${DEPLOY_PATH}/*
+                    
+                    # Copy new build files
+                    sudo cp -r build/* ${DEPLOY_PATH}/
+                    
+                    # Set correct permissions
+                    sudo chown -R www-data:www-data ${DEPLOY_PATH}
+                    sudo chmod -R 755 ${DEPLOY_PATH}
+                '''
             }
+        }
+        
+        stage('Reload Nginx') {
+            steps {
+                sh 'sudo systemctl reload nginx'
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo '✅ Deployment successful! App is live on Nginx'
+        }
+        failure {
+            echo '❌ Deployment failed! Check the errors above'
         }
     }
 }
