@@ -1,61 +1,54 @@
 pipeline {
     agent any
-    
+
     environment {
-        DEPLOY_PATH = '/var/www/react-app'
+        EC2_IP = '13.233.100.9'
+        DEPLOY_PATH = '/var/www/north/build'
     }
-    
+
     stages {
+
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/fatimahtariq35/north.git'
             }
         }
-        
+
         stage('Install') {
             steps {
                 sh 'npm install'
             }
         }
-        
+
         stage('Build') {
             steps {
                 sh 'npm run build'
             }
         }
-        
-        stage('Deploy to Nginx') {
+
+        stage('Deploy') {
             steps {
-                sh '''
-                    # Create deployment directory if it doesn't exist
-                    sudo mkdir -p ${DEPLOY_PATH}
-                    
-                    # Remove old build files
-                    sudo rm -rf ${DEPLOY_PATH}/*
-                    
-                    # Copy new build files
-                    sudo cp -r build/* ${DEPLOY_PATH}/
-                    
-                    # Set correct permissions
-                    sudo chown -R www-data:www-data ${DEPLOY_PATH}
-                    sudo chmod -R 755 ${DEPLOY_PATH}
-                '''
+                sh """
+                rsync -avz --delete build/ ubuntu@${EC2_IP}:${DEPLOY_PATH}
+                """
             }
         }
-        
+
         stage('Reload Nginx') {
             steps {
-                sh 'sudo systemctl reload nginx'
+                sh """
+                ssh ubuntu@${EC2_IP} 'sudo systemctl reload nginx'
+                """
             }
         }
     }
-    
+
     post {
         success {
-            echo '✅ Deployment successful! App is live on Nginx'
+            echo '✅ Deployment successful! App is live'
         }
         failure {
-            echo '❌ Deployment failed! Check the errors above'
+            echo '❌ Deployment failed'
         }
     }
 }
