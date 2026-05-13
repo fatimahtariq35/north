@@ -3,52 +3,80 @@ pipeline {
 
     environment {
         EC2_IP = '13.233.100.9'
-        DEPLOY_PATH = '/var/www/north/build'
+        DEPLOY_PATH = '/var/www/north'
     }
 
     stages {
 
-        stage('Checkout') {
+        stage('Clone Repository') {
             steps {
-                git branch: 'main', url: 'https://github.com/fatimahtariq35/north.git'
+                git branch: 'main',
+                url: 'https://github.com/fatimahtariq35/north.git'
             }
         }
 
-        stage('Install') {
+        stage('Install Dependencies') {
             steps {
                 sh 'npm install'
             }
         }
 
-        stage('Build') {
+        stage('Build React App') {
             steps {
                 sh 'npm run build'
             }
         }
 
-        stage('Deploy') {
+        stage('Create Deployment Folder') {
             steps {
                 sh """
-                rsync -avz --delete build/ ubuntu@${EC2_IP}:${DEPLOY_PATH}
+                ssh ubuntu@${EC2_IP} '
+                    sudo mkdir -p ${DEPLOY_PATH}
+                    sudo chown -R ubuntu:ubuntu ${DEPLOY_PATH}
+                '
                 """
             }
         }
 
-        stage('Reload Nginx') {
+        stage('Deploy Build to EC2') {
             steps {
                 sh """
-                ssh ubuntu@${EC2_IP} 'sudo systemctl reload nginx'
+                rsync -avz --delete build/ ubuntu@${EC2_IP}:${DEPLOY_PATH}/
+                """
+            }
+        }
+
+        stage('Restart Nginx') {
+            steps {
+                sh """
+                ssh ubuntu@${EC2_IP} '
+                    sudo systemctl restart nginx
+                '
+                """
+            }
+        }
+
+        stage('Deployment Verification') {
+            steps {
+                sh """
+                curl http://${EC2_IP}
                 """
             }
         }
     }
 
     post {
+
         success {
-            echo '✅ Deployment successful! App is live'
+            echo '✅ React App Successfully Deployed to EC2 + Nginx'
         }
+
         failure {
-            echo '❌ Deployment failed'
+            echo '❌ Deployment Failed'
+        }
+
+        always {
+            echo 'Pipeline Finished'
         }
     }
 }
