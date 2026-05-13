@@ -22,7 +22,7 @@ export default function Hero() {
 
         <h1 className="hero__title fade-up d2">
           Where Vision Meets <br />
-          <em>Northern Excellence</em>
+          <em>Northern Excellence checkkkk</em>
         </h1>
 
         <p className="hero__desc fade-up d3">
