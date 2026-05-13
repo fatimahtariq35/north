@@ -1,82 +1,34 @@
 pipeline {
     agent any
 
-    environment {
-        EC2_IP = '13.233.100.9'
-        DEPLOY_PATH = '/var/www/north'
+    tools {
+        nodejs 'node18'
     }
 
     stages {
-
-        stage('Clone Repository') {
+        stage('Clone') {
             steps {
-                git branch: 'main',
-                url: 'https://github.com/fatimahtariq35/north.git'
+                git branch: 'main', url: 'https://github.com/fatimahtariq35/north.git'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Install') {
             steps {
                 sh 'npm install'
             }
         }
 
-        stage('Build React App') {
+        stage('Build') {
             steps {
                 sh 'npm run build'
             }
         }
 
-        stage('Create Deployment Folder') {
+        stage('Deploy') {
             steps {
-                sh """
-                ssh ubuntu@${EC2_IP} '
-                    sudo mkdir -p ${DEPLOY_PATH}
-                    sudo chown -R ubuntu:ubuntu ${DEPLOY_PATH}
-                '
-                """
+                sh 'sudo rm -rf /usr/share/nginx/html/*'
+                sh 'sudo cp -r build/* /usr/share/nginx/html/'
             }
-        }
-
-        stage('Deploy Build to EC2') {
-            steps {
-                sh """
-                rsync -avz --delete build/ ubuntu@${EC2_IP}:${DEPLOY_PATH}/
-                """
-            }
-        }
-
-        stage('Restart Nginx') {
-            steps {
-                sh """
-                ssh ubuntu@${EC2_IP} '
-                    sudo systemctl restart nginx
-                '
-                """
-            }
-        }
-
-        stage('Deployment Verification') {
-            steps {
-                sh """
-                curl http://${EC2_IP}
-                """
-            }
-        }
-    }
-
-    post {
-
-        success {
-            echo '✅ React App Successfully Deployed to EC2 + Nginx'
-        }
-
-        failure {
-            echo '❌ Deployment Failed'
-        }
-
-        always {
-            echo 'Pipeline Finished'
         }
     }
 }
